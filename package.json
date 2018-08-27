@@ -1,0 +1,16 @@
+{
+  "name": "vuex-fetchers",
+  "version": "1.0.0",
+  "description": "A package which helps you make smart fetcher actions for Vuex",
+  "main": "dist/index.js",
+  "types" : "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -r dist; tsc"
+  },
+  "repository": "https://github.com/pietdevries94/vuex-fetchers",
+  "author": "Piet de Vries <piet@devries.tech>)",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.0.1"
+  }
+}
