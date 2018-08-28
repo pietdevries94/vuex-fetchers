@@ -1,13 +1,13 @@
 import { Action, ActionContext } from 'vuex'
 
 // R: raw response
-interface Model<Self, R> {
+export interface Model<Self, R> {
     getNew(): Self
     fillModel(raw: R): Self
     getRaw(): R
 }
 
-enum RequestState {
+export enum RequestState {
     Pending,
     Success,
     Error,
@@ -19,7 +19,7 @@ interface FetcherState {
 }
 
 // S: state, RS: root state
-export class FetchFactory<S extends FetcherState, RS> {
+export default class<S extends FetcherState, RS> {
     // P: payload, R: raw response, M: model response
     public createSingleFetcher<P, R, M extends Model<M, R>> (mutationName: string, call: (payload: P) => Promise<R>, modelFactory: () => M): Action<S, RS> {
         return this.createFetcher<P, R, M>(mutationName, call, modelFactory().fillModel)
@@ -42,7 +42,7 @@ export class FetchFactory<S extends FetcherState, RS> {
                 const raw = await call(payload)
                 context.commit(mutationName, parser(raw))
             } catch (err) {
-                alert(err)
+                // @todo
             }
         }
     }
