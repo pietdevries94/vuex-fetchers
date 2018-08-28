@@ -12,5 +12,8 @@ module.exports = {
     "moduleNameMapper": {
         "src/(.*)": "<rootDir>/src/$1"
     },
-    "testURL": "https://www.somthing.com/test.html"
+    "testURL": "https://www.somthing.com/test.html",
+    "collectCoverageFrom": [
+        "src/**/*.ts",
+    ],
 }
