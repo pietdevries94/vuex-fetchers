@@ -16,4 +16,5 @@ cache:
 
 script:
   - yarn install
-  - yarn test-with-coverage
+  - yarn test
+  - yarn build
