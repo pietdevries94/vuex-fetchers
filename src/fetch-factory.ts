@@ -12,10 +12,11 @@ export enum RequestState {
     Success,
     Error,
     Cancelled,
+    NotStarted,
 }
 
 interface FetcherState {
-    vuexFetchersState: Map<string, Map<Object, RequestState>>
+    vuexFetchersState: Map<string, Map<any, RequestState>>
 }
 
 // S: state, RS: root state
@@ -38,12 +39,38 @@ export default class<S extends FetcherState, RS> {
 
     private createFetcher<P, R, M> (mutationName: string, call: (payload: P) => Promise<R>, parser: (raw: R) => M): Action<S, RS> {
         return async (context: ActionContext<S, RS>, payload: P) => {
+            const currentState = this.getRequestState(context.state, mutationName, payload)
+
+            if ([RequestState.Pending, RequestState.Success].includes(currentState)) { return }
+
+            this.setRequestState(context.state, mutationName, payload, RequestState.Pending)
+
             try {
                 const raw = await call(payload)
+                this.setRequestState(context.state, mutationName, payload, RequestState.Success)
                 context.commit(mutationName, parser(raw))
             } catch (err) {
-                // @todo
+                this.setRequestState(context.state, mutationName, payload, RequestState.Error)
             }
         }
+    }
+
+    private getRequestState(state: FetcherState, mutationName: string, payload: any): RequestState {
+        let mutationMap = state.vuexFetchersState.get(mutationName)
+        if (mutationMap === undefined) {
+            state.vuexFetchersState.set(mutationName, new Map())
+            mutationMap = state.vuexFetchersState.get(mutationName)
+        }
+        let requestState = mutationMap!.get(payload)
+        if (requestState === undefined) {
+            mutationMap!.set(payload, RequestState.NotStarted)
+            requestState = mutationMap!.get(payload)
+        }
+
+        return requestState!
+    }
+
+    private setRequestState(state: FetcherState, mutationName: string, payload: any, requestState: RequestState) {
+        state.vuexFetchersState.get(mutationName)!.set(payload, requestState)
     }
 }
