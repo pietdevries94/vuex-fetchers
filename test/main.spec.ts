@@ -17,4 +17,28 @@ describe('FetchFactory', () => {
         const promise = singleAction(MockContext, {id: 1})
         return expect(promise).resolves.toBeUndefined()
     })
+
+    it('can create bulk fetch actions', () => {
+        expect('@todo').toEqual(true)
+    })
+
+    it('sets the request state to pending, when the action is started', () => {
+        expect('@todo').toEqual(true)
+    })
+
+    it('sets the request state to success, when the action is resolved', () => {
+        expect('@todo').toEqual(true)
+    })
+
+    it('sets the request state to error, when the action is rejected', () => {
+        expect('@todo').toEqual(true)
+    })
+
+    it('can create invalidate actions', () => {
+        expect('@todo').toEqual(true)
+    })
+
+    it('can create force fetch actions', () => {
+        expect('@todo').toEqual(true)
+    })
 })
