@@ -1,4 +1,4 @@
-import { Model, RequestState } from 'src/fetch-factory'
+import { Model, RequestState } from 'src/main'
 import { ActionContext } from 'vuex';
 
 export interface MockRaw {

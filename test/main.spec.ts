@@ -1,4 +1,4 @@
-import FetchFactory from 'src/fetch-factory'
+import FetchFactory from 'src/main'
 import { MockRaw, MockModel, MockState, CreateMockPromise, MockPayload, MockContext } from './mocks'
 
 describe('FetchFactory', () => {
