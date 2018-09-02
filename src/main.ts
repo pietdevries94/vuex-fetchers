@@ -23,14 +23,19 @@ interface FetcherState {
 export default class<S extends FetcherState, RS> {
     // P: payload, R: raw response, M: model response
     public createSingleFetcher<P, R, M extends Model<M, R>> (mutationName: string, call: (payload: P) => Promise<R>, modelFactory: () => M): Action<S, RS> {
-        return this.createFetcher<P, R, M>(mutationName, call, modelFactory().fillModel)
+        const parser = (raw: R): M => {
+            const model = modelFactory()
+            return model.fillModel(raw)
+        }
+        return this.createFetcher<P, R, M>(mutationName, call, parser)
     }
 
     // P: payload, R: raw response, M: model response
     public createBulkFetcher<P, R, M extends Model<M, R>> (mutationName: string, call: (payload: P) => Promise<R[]>, modelFactory: () => M): Action<S, RS> {
         const parser = (raw: R[]): M[] => {
             return raw.map((r): M => {
-                return modelFactory().fillModel(r)
+                const model = modelFactory()
+                return model.fillModel(r)
             })
         }
 
@@ -51,6 +56,7 @@ export default class<S extends FetcherState, RS> {
                 context.commit(mutationName, parser(raw))
             } catch (err) {
                 this.setRequestState(context.state, mutationName, payload, RequestState.Error)
+                throw err
             }
         }
     }

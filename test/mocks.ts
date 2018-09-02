@@ -12,18 +12,18 @@ export class MockModel implements Model<MockModel, MockRaw> {
     private mockNumber: number = 0
     private mockString: string = ''
 
-    getNew() {
+    public getNew() {
         return new MockModel()
     }
 
-    fillModel(raw: MockRaw) {
+    public fillModel(raw: MockRaw) {
         this.id = raw.id
         this.mockNumber = raw.mockNumber
         this.mockString = raw.mockString
         return this
     }
 
-    getRaw() {
+    public getRaw() {
         return {
             id: this.id,
             mockNumber: this.mockNumber,
@@ -52,7 +52,7 @@ export const CreateMockPromise = <R>(response: R): (payload: MockPayload) => Pro
 export const CreateFailingMockPromise = <R>(response: any): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
-            reject(response)
+            reject("failed the mock promise")
         })
     }
 }
@@ -80,4 +80,4 @@ export const MockContext: ActionContext<MockState, MockState> = {
     dispatch: () => new Promise<any>( (resolve) => {resolve()}),
     getters: () => {},
     rootGetters: () => {}
-  }
+}
