@@ -33,7 +33,7 @@ export class MockModel implements Model<MockModel, MockRaw> {
 }
 
 export interface MockState {
-    vuexFetchersState: Map<string, Map<Object, RequestState>>
+    vuexFetchersState: Map<string, Map<string, RequestState>>
     mockModelList: MockModel[]
 }
 
@@ -41,26 +41,29 @@ export interface MockPayload {
     id: number
 }
 
-export const CreateMockPromise = <R>(response: R): (payload: MockPayload) => Promise<R> => {
+export const CreateMockPromise = <R>(response: R, callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
+            callback()
             resolve(response)
         })
     }
 }
 
-export const CreateFailingMockPromise = <R>(response: any): (payload: MockPayload) => Promise<R> => {
+export const CreateFailingMockPromise = <R>(callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
+            callback()
             reject("failed the mock promise")
         })
     }
 }
 
-export const CreateSlowMockPromise = <R>(response: R): (payload: MockPayload) => Promise<R> => {
+export const CreateSlowMockPromise = <R>(response: R, callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
             setTimeout(() => {
+                callback()
                 resolve(response)
             }, 300)
         })
