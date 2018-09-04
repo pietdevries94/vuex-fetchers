@@ -70,7 +70,11 @@ export const CreateSlowMockPromise = <R>(response: R, callback: () => {}): (payl
     }
 }
 
-export const MockContext: ActionContext<MockState, MockState> = {
+interface MockActionContext extends ActionContext<MockState, MockState> {
+    commit: jest.Mock
+}
+
+export const MockContext: MockActionContext = {
     state: {
         vuexFetchersState: new Map(),
         mockModelList: []
@@ -79,7 +83,7 @@ export const MockContext: ActionContext<MockState, MockState> = {
         vuexFetchersState: new Map(),
         mockModelList: []
     },
-    commit: () => {},
+    commit: jest.fn(),
     dispatch: () => new Promise<any>( (resolve) => {resolve()}),
     getters: () => {},
     rootGetters: () => {}

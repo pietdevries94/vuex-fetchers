@@ -12,6 +12,7 @@ describe('FetchFactory', () => {
             vuexFetchersState: new Map(),
             mockModelList: []
         }
+        MockContext.commit.mockReset()
     })
 
     it('can create single fetch actions', async () => {
@@ -31,6 +32,7 @@ describe('FetchFactory', () => {
         await expect(promise).resolves.toBeUndefined()
 
         expect(callback).toBeCalled()
+        expect(MockContext.commit).toBeCalledWith('nonexistingmutation', {"id": 1, "mockNumber": 10, "mockString": "foo"})
     })
 
     it('can create bulk fetch actions', async () => {
@@ -50,6 +52,7 @@ describe('FetchFactory', () => {
         await expect(promise).resolves.toBeUndefined()
 
         expect(callback).toBeCalled()
+        expect(MockContext.commit).toBeCalledWith('nonexistingmutation', [{"id": 1, "mockNumber": 10, "mockString": "foo"}])
     })
 
     it('sets the request state to pending, when the action is started and to success when it resolves', async () => {
@@ -68,11 +71,14 @@ describe('FetchFactory', () => {
         const payload = {id: 1}
         const promise = singleAction(MockContext, payload)
         expect(MockContext.state.vuexFetchersState.get('nonexistingmutation')!.get(JSON.stringify(payload))).toEqual(RequestState.Pending)
+        expect(callback).not.toBeCalled()
+        expect(MockContext.commit).not.toBeCalled()
 
         await expect(promise).resolves.toBeUndefined()
 
         expect(MockContext.state.vuexFetchersState.get('nonexistingmutation')!.get(JSON.stringify(payload))).toEqual(RequestState.Success)
         expect(callback).toBeCalled()
+        expect(MockContext.commit).toBeCalledWith('nonexistingmutation', {"id": 1, "mockNumber": 10, "mockString": "foo"})
     })
 
     it('sets the request state to error, when the action is rejected', async () => {
@@ -91,6 +97,7 @@ describe('FetchFactory', () => {
 
         expect(MockContext.state.vuexFetchersState.get('nonexistingmutation')!.get(JSON.stringify(payload))).toEqual(RequestState.Error)
         expect(callback).toBeCalled()
+        expect(MockContext.commit).not.toBeCalled()
     })
 
     it('does not call the promise when the request state is pending or successful', async () => {
@@ -113,6 +120,7 @@ describe('FetchFactory', () => {
         await expect(singleAction(MockContext, {id: 1})).resolves.toBeUndefined()
 
         expect(callback).not.toBeCalled()
+        expect(MockContext.commit).not.toBeCalled()
 
         payloadMap.set(JSON.stringify({id: 1}), RequestState.Success)
         MockContext.state.vuexFetchersState.set('nonexistingmutation', payloadMap)
@@ -120,6 +128,7 @@ describe('FetchFactory', () => {
         await expect(singleAction(MockContext, {id: 1})).resolves.toBeUndefined()
 
         expect(callback).not.toBeCalled()
+        expect(MockContext.commit).not.toBeCalled()
 
         payloadMap.set(JSON.stringify({id: 1}), RequestState.Error)
         MockContext.state.vuexFetchersState.set('nonexistingmutation', payloadMap)
@@ -127,11 +136,8 @@ describe('FetchFactory', () => {
         await expect(singleAction(MockContext, {id: 1})).resolves.toBeUndefined()
 
         expect(callback).toBeCalled()
+        expect(MockContext.commit).toBeCalledWith('nonexistingmutation', {"id": 1, "mockNumber": 10, "mockString": "foo"})
     })
-
-    // it('calls the given mutation on success', () => {
-    //     expect('@todo').toEqual(true)
-    // })
 
     // @todo uncomment when this is implemented
     // it('can create invalidate actions', () => {
