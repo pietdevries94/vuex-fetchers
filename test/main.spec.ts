@@ -163,4 +163,9 @@ describe('FetchFactory', () => {
     // it('does call the promise in a forced action when the request state is successful', () => {
     //     expect('@todo').toEqual(true)
     // })
+
+    // @todo uncomment when this is implemented
+    // it('places an empty model in the store before starting the fetcher', () => {
+    //     expect('@todo').toEqual(true)
+    // })
 })
