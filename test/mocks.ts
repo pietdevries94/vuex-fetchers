@@ -12,18 +12,18 @@ export class MockModel implements Model<MockModel, MockRaw> {
     private mockNumber: number = 0
     private mockString: string = ''
 
-    getNew() {
+    public getNew() {
         return new MockModel()
     }
 
-    fillModel(raw: MockRaw) {
+    public fillModel(raw: MockRaw) {
         this.id = raw.id
         this.mockNumber = raw.mockNumber
         this.mockString = raw.mockString
         return this
     }
 
-    getRaw() {
+    public getRaw() {
         return {
             id: this.id,
             mockNumber: this.mockNumber,
@@ -33,7 +33,7 @@ export class MockModel implements Model<MockModel, MockRaw> {
 }
 
 export interface MockState {
-    vuexFetchersState: Map<string, Map<Object, RequestState>>
+    vuexFetchersState: Map<string, Map<string, RequestState>>
     mockModelList: MockModel[]
 }
 
@@ -41,33 +41,40 @@ export interface MockPayload {
     id: number
 }
 
-export const CreateMockPromise = <R>(response: R): (payload: MockPayload) => Promise<R> => {
+export const CreateMockPromise = <R>(response: R, callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
+            callback()
             resolve(response)
         })
     }
 }
 
-export const CreateFailingMockPromise = <R>(response: any): (payload: MockPayload) => Promise<R> => {
+export const CreateFailingMockPromise = <R>(callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
-            reject(response)
+            callback()
+            reject("failed the mock promise")
         })
     }
 }
 
-export const CreateSlowMockPromise = <R>(response: R): (payload: MockPayload) => Promise<R> => {
+export const CreateSlowMockPromise = <R>(response: R, callback: () => {}): (payload: MockPayload) => Promise<R> => {
     return (payload: MockPayload): Promise<R> => {
         return new Promise<R>((resolve, reject: any) => {
             setTimeout(() => {
+                callback()
                 resolve(response)
             }, 300)
         })
     }
 }
 
-export const MockContext: ActionContext<MockState, MockState> = {
+interface MockActionContext extends ActionContext<MockState, MockState> {
+    commit: jest.Mock
+}
+
+export const MockContext: MockActionContext = {
     state: {
         vuexFetchersState: new Map(),
         mockModelList: []
@@ -76,8 +83,8 @@ export const MockContext: ActionContext<MockState, MockState> = {
         vuexFetchersState: new Map(),
         mockModelList: []
     },
-    commit: () => {},
+    commit: jest.fn(),
     dispatch: () => new Promise<any>( (resolve) => {resolve()}),
     getters: () => {},
     rootGetters: () => {}
-  }
+}
