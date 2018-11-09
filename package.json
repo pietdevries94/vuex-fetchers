@@ -1,5 +1,5 @@
 {
-  "name": "vuex-fetchers",
+  "name": "vuex-fetch-factory",
   "version": "1.0.0",
   "description": "A package which helps you make smart fetcher actions for Vuex",
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
     "build": "rm -r dist; tsc",
     "test": "jest"
   },
-  "repository": "https://github.com/pietdevries94/vuex-fetchers",
+  "repository": "https://github.com/pietdevries94/vuex-fetch-factory",
   "author": "Piet de Vries <piet@devries.tech>)",
   "license": "MIT",
   "devDependencies": {
