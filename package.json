@@ -1,6 +1,6 @@
 {
   "name": "vuex-fetch-factory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package which helps you make smart fetcher actions for Vuex",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
