@@ -22,16 +22,16 @@ interface FetcherState {
 // S: state, RS: root state
 export default class <S extends FetcherState, RS> {
     // P: payload, R: raw response, M: model response
-    public createSingleFetcher<P, R, M extends Model<M, R>>(mutationName: string, call: (payload: P) => Promise<R>, modelFactory: () => M): Action<S, RS> {
+    public createSingleFetcher<P, R, M extends Model<M, R>>(force: boolean, mutationName: string, call: (payload: P) => Promise<R>, modelFactory: () => M): Action<S, RS> {
         const parser = (raw: R): M => {
             const model = modelFactory()
             return model.fillModel(raw)
         }
-        return this.createFetcher<P, R, M>(mutationName, call, parser, modelFactory())
+        return this.createFetcher<P, R, M>(force, mutationName, call, parser, modelFactory())
     }
 
     // P: payload, R: raw response, M: model response
-    public createBulkFetcher<P, R, M extends Model<M, R>>(mutationName: string, call: (payload: P) => Promise<R[]>, modelFactory: () => M): Action<S, RS> {
+    public createBulkFetcher<P, R, M extends Model<M, R>>(force: boolean, mutationName: string, call: (payload: P) => Promise<R[]>, modelFactory: () => M): Action<S, RS> {
         const parser = (raw: R[]): M[] => {
             return raw.map((r): M => {
                 const model = modelFactory()
@@ -39,15 +39,22 @@ export default class <S extends FetcherState, RS> {
             })
         }
 
-        return this.createFetcher<P, R[], M[]>(mutationName, call, parser, [])
+        return this.createFetcher<P, R[], M[]>(force, mutationName, call, parser, [])
     }
 
-    private createFetcher<P, R, M>(mutationName: string, call: (payload: P) => Promise<R>, parser: (raw: R) => M, placeholder: M): Action<S, RS> {
+    public createStateInvalidator<P>(mutationName: string): Action<S, RS> {
+        return async (context: ActionContext<S, RS>, payload: P) => {
+            const jsonPayload = JSON.stringify(payload)
+            context.state.vuexFetchersState.get(mutationName)!.delete(jsonPayload)
+        }
+    }
+
+    private createFetcher<P, R, M>(force: boolean, mutationName: string, call: (payload: P) => Promise<R>, parser: (raw: R) => M, placeholder: M): Action<S, RS> {
         return async (context: ActionContext<S, RS>, payload: P) => {
             const jsonPayload = JSON.stringify(payload)
             const currentState = this.getRequestState(context.state, mutationName, jsonPayload)
 
-            if ([RequestState.Pending, RequestState.Success].includes(currentState)) { return }
+            if (!force && [RequestState.Pending, RequestState.Success].includes(currentState)) { return }
 
             context.commit(mutationName, placeholder)
             this.setRequestState(context.state, mutationName, jsonPayload, RequestState.Pending)

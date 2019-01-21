@@ -25,7 +25,7 @@ describe('FetchFactory', () => {
             mockString: 'foo'
         }, callback)
 
-        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>('nonexistingmutation', singlePromise, () => new MockModel())
+        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>(false, 'nonexistingmutation', singlePromise, () => new MockModel())
         if (typeof singleAction !== 'function') { throw Error('the action is not a function') }
 
         const promise = singleAction(MockContext, { id: 1 })
@@ -45,7 +45,7 @@ describe('FetchFactory', () => {
             mockString: 'foo'
         }], callback)
 
-        const singleAction = factory.createBulkFetcher<MockPayload, MockRaw, MockModel>('nonexistingmutation', bulkPromise, () => new MockModel())
+        const singleAction = factory.createBulkFetcher<MockPayload, MockRaw, MockModel>(false, 'nonexistingmutation', bulkPromise, () => new MockModel())
         if (typeof singleAction !== 'function') { throw Error('the action is not a function') }
 
         const promise = singleAction(MockContext, { id: 1 })
@@ -65,7 +65,7 @@ describe('FetchFactory', () => {
             mockString: 'foo'
         }, callback)
 
-        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>('nonexistingmutation', singleSlowPromise, () => new MockModel())
+        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>(false, 'nonexistingmutation', singleSlowPromise, () => new MockModel())
         if (typeof singleAction !== 'function') { throw Error('the action is not a function') }
 
         const payload = { id: 1 }
@@ -87,7 +87,7 @@ describe('FetchFactory', () => {
         const callback = jest.fn()
         const singleSlowPromise = CreateFailingMockPromise<MockRaw>(callback)
 
-        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>('nonexistingmutation', singleSlowPromise, () => new MockModel())
+        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>(false, 'nonexistingmutation', singleSlowPromise, () => new MockModel())
         if (typeof singleAction !== 'function') { throw Error('the action is not a function') }
 
         const payload = { id: 1 }
@@ -114,7 +114,7 @@ describe('FetchFactory', () => {
             mockString: 'foo'
         }, callback)
 
-        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>('nonexistingmutation', singlePromise, () => new MockModel())
+        const singleAction = factory.createSingleFetcher<MockPayload, MockRaw, MockModel>(false, 'nonexistingmutation', singlePromise, () => new MockModel())
         if (typeof singleAction !== 'function') { throw Error('the action is not a function') }
 
         await expect(singleAction(MockContext, { id: 1 })).resolves.toBeUndefined()
@@ -139,32 +139,26 @@ describe('FetchFactory', () => {
         expect(MockContext.commit).toBeCalledWith('nonexistingmutation', { "id": 1, "mockNumber": 10, "mockString": "foo" })
     })
 
-    // @todo uncomment when this is implemented
     // it('can create invalidate actions', () => {
     //     expect('@todo').toEqual(true)
     // })
 
-    // @todo uncomment when this is implemented
     // it('can create single force fetch actions', () => {
     //     expect('@todo').toEqual(true)
     // })
 
-    // @todo uncomment when this is implemented
     // it('can create bulk force fetch actions', () => {
     //     expect('@todo').toEqual(true)
     // })
 
-    // @todo uncomment when this is implemented
     // it('does call the promise in a forced action when the request state is pending', () => {
     //     expect('@todo').toEqual(true)
     // })
 
-    // @todo uncomment when this is implemented
     // it('does call the promise in a forced action when the request state is successful', () => {
     //     expect('@todo').toEqual(true)
     // })
 
-    // @todo uncomment when this is implemented
     // it('places an empty model in the store before starting the fetcher', () => {
     //     expect('@todo').toEqual(true)
     // })
